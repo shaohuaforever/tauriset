@@ -14,15 +14,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "ubuntu-22.04-arm" # Only available in public repos.
-            args: ""
+          - platform: "ubuntu-22.04" # Only available in public repos.
+            args:
+              - `[arch]`: "arm64"
+              - `[bundle]`: "deb"
+          
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
 
       - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04-arm' # This must match the platform value defined above.
+        if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
         run: |
           sudo dpkg --add-architecture arm64
           sudo apt update
