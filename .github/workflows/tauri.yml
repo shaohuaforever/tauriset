@@ -1,4 +1,4 @@
-name: linux打包
+name: 打包测试1
 on:
   workflow_dispatch:
     inputs:
