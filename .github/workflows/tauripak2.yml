@@ -16,9 +16,8 @@ jobs:
         include:
           - platform: "ubuntu-22.04" # Only available in public repos.
             args:
-              - `[arch]`: "arm64"
-              - `[bundle]`: "deb"
-          
+              - arch: "arm64"
+              - bundle: "deb"
 
     runs-on: ${{ matrix.platform }}
     steps:
