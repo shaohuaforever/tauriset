@@ -16,7 +16,7 @@ jobs:
           - arch: aarch64
             deb: arm64
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Cache rust build artifacts
         uses: Swatinem/rust-cache@v2
@@ -59,7 +59,7 @@ jobs:
 
       # TODO: Combine this with the basic workflow and upload the files to the Release.
       - name: Upload deb bundle
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Debian Bundle
           path: ${{ github.workspace }}/src-tauri/target/release/bundle/deb/appname_${{ env.APP_VERSION }}_${{ matrix.deb }}.deb
