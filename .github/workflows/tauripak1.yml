@@ -5,31 +5,17 @@ on:
   push:
     branches:
       - release
-
 jobs:
   build:
     runs-on: ubuntu-22.04
-
     strategy:
       matrix:
-        arch: [aarch64, armv7l]
+        arch: [aarch64]
         include:
           - arch: aarch64
-            cpu: cortex-a72
-            base_image: https://dietpi.com/downloads/images/DietPi_RPi-ARMv8-Bookworm.img.xz
             deb: arm64
-            rpm: aarch64
-            appimage: aarch64
-          - arch: armv7l
-            cpu: cortex-a53
-            deb: armhfp
-            rpm: arm
-            appimage: armhf
-            base_image: https://dietpi.com/downloads/images/DietPi_RPi-ARMv7-Bookworm.img.xz
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Cache rust build artifacts
         uses: Swatinem/rust-cache@v2
         with:
@@ -42,7 +28,6 @@ jobs:
           base_image: ${{ matrix.base_image }}
           cpu: ${{ matrix.cpu }}
           bind_mount_repository: true
-          image_additional_mb: 10240
           optimize_image: no
           #exit_on_fail: no
           commands: |
@@ -61,11 +46,12 @@ jobs:
             curl -fsSL https://deb.nodesource.com/setup_lts.x | bash
             apt-get install -y nodejs
 
+            npm install -g yarn
             # Install frontend dependencies
-            npm install
+            yarn install
 
             # Build the application
-            npm run tauri build -- --verbose
+            yarn tauri build -- --verbose
 
       - name: Get app version
         run: echo "APP_VERSION=$(jq -r .version src-tauri/tauri.conf.json)" >> $GITHUB_ENV
