@@ -3,10 +3,8 @@ name: 打包测试4
 on:
   workflow_dispatch:
   push:
-    paths-ignore:
-      - "README.md"
-    tags:
-      - "v*"
+    branches:
+      - release
 jobs:
 linux-build:
   strategy:
