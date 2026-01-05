@@ -25,9 +25,6 @@ jobs:
       - name: Build app
         uses: pguyot/arm-runner-action@v2.6.5
         with:
-          base_image: ${{ matrix.base_image }}
-          cpu: ${{ matrix.cpu }}
-          bind_mount_repository: true
           optimize_image: no
           #exit_on_fail: no
           commands: |
