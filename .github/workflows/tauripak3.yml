@@ -1,69 +1,72 @@
-name: 打包测试4
+name: Build
 
 on:
   workflow_dispatch:
   push:
-    branches:
-      - release
+    paths-ignore:
+      - "README.md"
+    tags:
+      - "v*"
+
 jobs:
-linux-build:
-  strategy:
-    matrix:
-      arch: [amd64, arm64]
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+  linux-build:
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
-        cache: "pip"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "pip"
 
-    - name: Install Dependencies
-      run: |
-        sudo add-apt-repository universe
-        sudo apt install libfuse2
-        wget -q -O appimage-builder-x86_64.AppImage https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.1.0/appimage-builder-1.1.0-x86_64.AppImage
-        chmod +x appimage-builder-x86_64.AppImage
-        pip3 install wheel
+      - name: Install Dependencies
+        run: |
+          sudo add-apt-repository universe
+          sudo apt install libfuse2
+          wget -q -O appimage-builder-x86_64.AppImage https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.1.0/appimage-builder-1.1.0-x86_64.AppImage
+          chmod +x appimage-builder-x86_64.AppImage
+          pip3 install wheel
 
-    - name: Amd64 Build
-      if: ${{ matrix.arch == 'amd64' }}
-      #        uses: AppImageCrafters/build-appimage@master
-      #        with:
-      #          recipe: build/AppImageBuilder_amd64.yml
-      run: |
-        ./appimage-builder-x86_64.AppImage --recipe build/AppImageBuilder_amd64.yml
+      - name: Amd64 Build
+        if: ${{ matrix.arch == 'amd64' }}
+        #        uses: AppImageCrafters/build-appimage@master
+        #        with:
+        #          recipe: build/AppImageBuilder_amd64.yml
+        run: |
+          ./appimage-builder-x86_64.AppImage --recipe build/AppImageBuilder_amd64.yml
 
-    - name: Arm64 Build
-      if: ${{ matrix.arch == 'arm64' }}
-      #        uses: AppImageCrafters/build-appimage@master
-      #        with:
-      #          recipe: build/AppImageBuilder_arm64.yml
-      run: |
-        ./appimage-builder-x86_64.AppImage --recipe build/AppImageBuilder_arm64.yml
+      - name: Arm64 Build
+        if: ${{ matrix.arch == 'arm64' }}
+        #        uses: AppImageCrafters/build-appimage@master
+        #        with:
+        #          recipe: build/AppImageBuilder_arm64.yml
+        run: |
+          ./appimage-builder-x86_64.AppImage --recipe build/AppImageBuilder_arm64.yml
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: LiveRecorder_${{ runner.os }}_${{ matrix.arch }}_${{ github.ref_name }}
-        path: |
-          config.json
-          LiveRecorder*
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: LiveRecorder_${{ runner.os }}_${{ matrix.arch }}_${{ github.ref_name }}
+          path: |
+            config.json
+            LiveRecorder*
 
-    - name: Create Archive
-      if: startsWith(github.ref_name, 'v')
-      uses: thedoctor0/zip-release@main
-      with:
-        filename: LiveRecorder_${{ runner.os }}_${{ matrix.arch }}_${{ github.ref_name }}.zip
-        path: |
-          config.json
-          LiveRecorder*
+      - name: Create Archive
+        if: startsWith(github.ref_name, 'v')
+        uses: thedoctor0/zip-release@main
+        with:
+          filename: LiveRecorder_${{ runner.os }}_${{ matrix.arch }}_${{ github.ref_name }}.zip
+          path: |
+            config.json
+            LiveRecorder*
 
-    - name: Release
-      if: startsWith(github.ref_name, 'v')
-      uses: softprops/action-gh-release@v1
-      with:
-        files: ./*.zip
+      - name: Release
+        if: startsWith(github.ref_name, 'v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./*.zip
