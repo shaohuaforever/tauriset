@@ -60,9 +60,3 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
-
-       - name: 上传构建产物
-         uses: actions/upload-artifact@v4
-         with:
-          name: tauri-app-linux
-          path: src-tauri/target/release/bundle/
