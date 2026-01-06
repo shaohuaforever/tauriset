@@ -1,14 +1,10 @@
-name: Release
+name: "测试123"
+
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
-    inputs:
-      branch:
-        description: "Branch to run the workflow on"
-        required: true
-        default: "template"
+  push:
+    branches:
+      - release
 
 jobs:
   publish-tauri:
